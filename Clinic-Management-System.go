@@ -15,11 +15,11 @@ type Visit struct {
 
 const NMAX int = 999
 
-var Patients [NMAX]Patient
+type Patients [NMAX]Patient
 
-var Visits [NMAX]Visit
+type Visits [NMAX]Visit
 
-var count int = 0
+var countPatient int = 0
 
 //Display the menu and handle the user inputs then connected to the other functions to the patients menue, show patient and statistics
 func main() {
@@ -82,9 +82,9 @@ func addPatient() {
 	//Dealt with the user inputs, To the amouth of patients added and the data of the patients 
 	fmt.Print("How many patients do you want to add? ")
 	fmt.Scan(&n)
-	limit = count + n
+	limit = countPatient + n
 	//Loops till the limit
-	for i = count; i < limit; i++ {
+	for i = countPatient; i < limit; i++ {
 		fmt.Print("ID: ")
 		fmt.Scan(&Patients[i].ID)
 		fmt.Print("Name: ")
@@ -95,7 +95,7 @@ func addPatient() {
 		fmt.Scan(&Visits[i].Service)
 		fmt.Print("Cost: ")
 		fmt.Scan(&Visits[i].Cost)
-		count = count + 1
+		countPatient = countPatient + 1
 	}
 }
 //The user could edit patient data by using name or ID
@@ -131,12 +131,12 @@ func editPatient() {
 func deletePatient() {
 	var target int
 	var found, i int
-	found = -1
 	
 	fmt.Println("Patient ID:")
 	fmt.Scan(&target)
-	
-	for i = 0 && found = -1 {
+	found = -1
+	i = 0
+	for i < countPatient && found = -1 {
 		if Patients[i].ID == target {
 			found = i
 		}
@@ -153,8 +153,10 @@ func deletePatient() {
 		fmt.Parintln("Patient not found")
 	}
 }
-
-
+func addVisit() {
+	
+}
+//Showing the most used service and total visits in a day
 func statistics() {
 	
 }
