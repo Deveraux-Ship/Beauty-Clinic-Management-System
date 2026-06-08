@@ -44,13 +44,16 @@ func main() {
 //Display the menu for the patients and handle the user inputs then connected to the other functions to add, edit, delete and back to the main menu
 func patientsMenu() {
 	var i, choice int
+	//Show patients data, if none were found then show no patients found
 	fmt.Println("===  List of Patients  ===")
 	if countPatient == 0 {
 		fmt.Println("No patients found")
 	}
+	//Print Patients data when found
 	for i := 0; i < countPatient; i++ {
 		fmt.Printf("ID: %d, Name: %s, Visit: %d \n", Patients[i].ID, Patients[i].Name, Visits[i].Date)
 	}
+	//Display the menu for the Patients, Show the choices for the user and connected to the other functions add, edit, delete, visit and back to the main menu
 	fmt.Println("===   Patients Menu    ===")
 	fmt.Println("1. Add Patient")
 	fmt.Println("2. edit Patient")
@@ -73,11 +76,14 @@ func patientsMenu() {
 	}
 }
 
+//Adding new patients to the list
 func addPatient() {
 	var n, i, limit int
+	//Dealt with the user inputs, To the amouth of patients added and the data of the patients 
 	fmt.Print("How many patients do you want to add? ")
 	fmt.Scan(&n)
 	limit = count + n
+	//Loops till the limit
 	for i = count; i < limit; i++ {
 		fmt.Print("ID: ")
 		fmt.Scan(&Patients[i].ID)
@@ -92,7 +98,7 @@ func addPatient() {
 		count = count + 1
 	}
 }
-
+//The user could edit patient data by using name or ID
 func editPatient() {
 	var Target string
 	var IDs, found, i int
@@ -121,12 +127,34 @@ func editPatient() {
 		fmt.Println("Patient not found")
 	}
 }
+//Deleting patient data by using the ID
 func deletePatient() {
-
+	var target int
+	var found, i int
+	found = -1
+	
+	fmt.Println("Patient ID:")
+	fmt.Scan(&target)
+	
+	for i = 0 && found = -1 {
+		if Patients[i].ID == target {
+			found = i
+		}
+		i = i + 1
+	}
+	
+	if found != -1 {
+		for i = found; i < countPatient; i++ {
+			Patients[i] = Patients[i+1]
+			Visits[i] = Visits[i+1]
+		}
+		countPatient = countPatient - 1
+	} else {
+		fmt.Parintln("Patient not found")
+	}
 }
-func showPatient() {
 
-}
+
 func statistics() {
-
+	
 }
