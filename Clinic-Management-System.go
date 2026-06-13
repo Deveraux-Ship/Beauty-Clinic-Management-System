@@ -43,39 +43,103 @@ func main() {
 
 //Display the menu for the patients and handle the user inputs then connected to the other functions to add, edit, delete and back to the main menu
 func patientsMenu() {
-	var i, choice int
-	//Show patients data, if none were found then show no patients found
+	var choice int
 	fmt.Println("===  List of Patients  ===")
 	if countPatient == 0 {
 		fmt.Println("No patients found")
 	}
-	//Print Patients data when found
 	for i := 0; i < countPatient; i++ {
-		fmt.Printf("ID: %d, Name: %s, Visit: %d \n", Patients[i].ID, Patients[i].Name, Visits[i].Date)
+		fmt.Printf("ID: %d, Name: %s, Date: %d\n", patients[i].ID, patients[i].Name, visits[i].Date)
 	}
-	//Display the menu for the Patients, Show the choices for the user and connected to the other functions add, edit, delete, visit and back to the main menu
 	fmt.Println("===   Patients Menu    ===")
-	fmt.Println("1. Add Patient")
-	fmt.Println("2. edit Patient")
-	fmt.Println("3. Delete Patient")
-	fmt.Println("4. Add Visit")
-	fmt.Println("6. Back to Main Menu")
+	fmt.Println("1. Search for Patient (Name or ID)")
+	fmt.Println("2. Add Patient")
+	fmt.Println("3. Back to Main Menu")
 	fmt.Print("Choose: ")
 	fmt.Scan(&choice)
 	switch choice {
 	case 1:
-		addPatient()
+		searchPatient()
 	case 2:
-		editPatient()
+		addPatient()
 	case 3:
-		deletePatient()
-	case 4:
-		addVisit()
-	case 5:
 		main()
 	}
 }
 
+func searchPatient() {
+	var method int
+	fmt.Println("Search by:")
+	fmt.Println("1. Name (Sequential Search)")
+	fmt.Println("2. ID   (Binary Search)")
+	fmt.Print("Choose: ")
+	fmt.Scan(&method)
+
+	switch method {
+
+	// --- Sequential search by Name ---
+	case 1:
+		var targetName string
+		fmt.Print("Enter patient name: ")
+		fmt.Scan(&targetName)
+
+		found := false
+		for i := 0; i < countPatient; i++ {
+			if patients[i].Name == targetName {
+				fmt.Printf("Found — ID: %d | Name: %s | Date: %d | Service: %s | Cost: %.2f\n",
+					patients[i].ID, patients[i].Name,
+					visits[i].Date, visits[i].Service, visits[i].Cost)
+				found = true
+				// No break: sequential search can surface every match with the same name
+			}
+		}
+		if !found {
+			fmt.Println("Patient not found.")
+		}
+
+	// --- Binary search by ID ---
+	case 2:
+		var targetID int
+		fmt.Print("Enter patient ID: ")
+		fmt.Scan(&targetID)
+
+		// Build a sorted index slice so we don't rearrange the original arrays.
+		// Each element is an index into patients[]/visits[].
+		sortedIdx := make([]int, countPatient)
+		for i := 0; i < countPatient; i++ {
+			sortedIdx[i] = i
+		}
+		sort.Slice(sortedIdx, func(a, b int) bool {
+			return patients[sortedIdx[a]].ID < patients[sortedIdx[b]].ID
+		})
+
+		// Standard binary search over the sorted index
+		lo, hi, foundIdx := 0, countPatient-1, -1
+		for lo <= hi {
+			mid := (lo + hi) / 2
+			midID := patients[sortedIdx[mid]].ID
+			if midID == targetID {
+				foundIdx = sortedIdx[mid]
+				break
+			} else if midID < targetID {
+				lo = mid + 1
+			} else {
+				hi = mid - 1
+			}
+		}
+
+		if foundIdx != -1 {
+			fmt.Printf("Found — ID: %d | Name: %s | Date: %d | Service: %s | Cost: %.2f\n",
+				patients[foundIdx].ID, patients[foundIdx].Name,
+				visits[foundIdx].Date, visits[foundIdx].Service, visits[foundIdx].Cost)
+		} else {
+			fmt.Println("Patient not found.")
+		}
+
+	default:
+		fmt.Println("Invalid choice.")
+	}
+}
 //Adding new patients to the list
 func addPatient() {
 	var n, i, limit int
