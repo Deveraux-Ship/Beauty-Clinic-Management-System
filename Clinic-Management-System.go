@@ -77,7 +77,7 @@ func searchPatient() {
 
 	switch method {
 
-	// --- Sequential search by Name ---
+	//Sequential search by Name
 	case 1:
 		var targetName string
 		fmt.Print("Enter patient name: ")
@@ -90,21 +90,19 @@ func searchPatient() {
 					patients[i].ID, patients[i].Name,
 					visits[i].Date, visits[i].Service, visits[i].Cost)
 				found = true
-				// No break: sequential search can surface every match with the same name
 			}
 		}
 		if !found {
 			fmt.Println("Patient not found.")
 		}
 
-	// --- Binary search by ID ---
+	// Binary search by ID
 	case 2:
     var targetID int
     fmt.Print("Enter patient ID: ")
     fmt.Scan(&targetID)
 
-    // Build a sorted index slice so we don't rearrange the original arrays.
-    sortedIdx := make([]int, countPatient)
+	sortedIdx := make([]int, countPatient)
     for i := 0; i < countPatient; i++ {
         sortedIdx[i] = i
     }
@@ -112,7 +110,7 @@ func searchPatient() {
         return patients[sortedIdx[a]].ID < patients[sortedIdx[b]].ID
     })
 
-    // Binary search — loop continues until range is exhausted or match is found
+    // Binary search, loop continues until range is finished or match is found
     lo, hi, foundIdx := 0, countPatient-1, -1
     for lo <= hi && foundIdx == -1 {
         mid := (lo + hi) / 2
