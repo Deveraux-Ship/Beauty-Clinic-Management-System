@@ -99,42 +99,40 @@ func searchPatient() {
 
 	// --- Binary search by ID ---
 	case 2:
-		var targetID int
-		fmt.Print("Enter patient ID: ")
-		fmt.Scan(&targetID)
+    var targetID int
+    fmt.Print("Enter patient ID: ")
+    fmt.Scan(&targetID)
 
-		// Build a sorted index slice so we don't rearrange the original arrays.
-		// Each element is an index into patients[]/visits[].
-		sortedIdx := make([]int, countPatient)
-		for i := 0; i < countPatient; i++ {
-			sortedIdx[i] = i
-		}
-		sort.Slice(sortedIdx, func(a, b int) bool {
-			return patients[sortedIdx[a]].ID < patients[sortedIdx[b]].ID
-		})
+    // Build a sorted index slice so we don't rearrange the original arrays.
+    sortedIdx := make([]int, countPatient)
+    for i := 0; i < countPatient; i++ {
+        sortedIdx[i] = i
+    }
+    sort.Slice(sortedIdx, func(a, b int) bool {
+        return patients[sortedIdx[a]].ID < patients[sortedIdx[b]].ID
+    })
 
-		// Standard binary search over the sorted index
-		lo, hi, foundIdx := 0, countPatient-1, -1
-		for lo <= hi {
-			mid := (lo + hi) / 2
-			midID := patients[sortedIdx[mid]].ID
-			if midID == targetID {
-				foundIdx = sortedIdx[mid]
-				break
-			} else if midID < targetID {
-				lo = mid + 1
-			} else {
-				hi = mid - 1
-			}
-		}
+    // Binary search — loop continues until range is exhausted or match is found
+    lo, hi, foundIdx := 0, countPatient-1, -1
+    for lo <= hi && foundIdx == -1 {
+        mid := (lo + hi) / 2
+        midID := patients[sortedIdx[mid]].ID
+        if midID == targetID {
+            foundIdx = sortedIdx[mid]
+        } else if midID < targetID {
+            lo = mid + 1
+        } else {
+            hi = mid - 1
+        }
+    }
 
-		if foundIdx != -1 {
-			fmt.Printf("Found — ID: %d | Name: %s | Date: %d | Service: %s | Cost: %.2f\n",
-				patients[foundIdx].ID, patients[foundIdx].Name,
-				visits[foundIdx].Date, visits[foundIdx].Service, visits[foundIdx].Cost)
-		} else {
-			fmt.Println("Patient not found.")
-		}
+    if foundIdx != -1 {
+        fmt.Printf("Found — ID: %d | Name: %s | Date: %d | Service: %s | Cost: %.2f\n",
+            patients[foundIdx].ID, patients[foundIdx].Name,
+            visits[foundIdx].Date, visits[foundIdx].Service, visits[foundIdx].Cost)
+    } else {
+        fmt.Println("Patient not found.")
+    }
 
 	default:
 		fmt.Println("Invalid choice.")
